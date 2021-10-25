@@ -1,112 +1,116 @@
-// Create and Save a new Note
-const Note = require('../models/note.model.js');
+const logger = require('../../utils/logger.js');
+const {
+    createNewNote,
+    getNotes,
+    getNote,
+    updateNoteId,
+    deleteNote
+} = require('../service/note.service.js')
+/**
+ * 
+ * @param {object} req 
+ * @param {object} res 
+ * creates a user from data given
+ */
 exports.create = (req, res) => {
-    // Validate request
-    if(!req.body.content) {
-        return res.status(400).send({
-            message: "Note content can not be empty"
-        });
-    }
 
-    // Create a Note
-    const note = new Note({
-        title: req.body.title || "Untitled Note", 
-        content: req.body.content
-    });
-
-    // Save Note in the database
-    note.save()
-    .then(data => {
+    createNewNote(req.body.title, req.body.content).then(data => {
         res.send(data);
     }).catch(err => {
+        logger.error(err.message || "Some error occurred while creating the Note.")
         res.status(500).send({
             message: err.message || "Some error occurred while creating the Note."
+
         });
     });
 };
+/**
+ * @description retrieve data from database
+ * @param {object} req 
+ * @param {object} res 
+ */
 exports.findAll = (req, res) => {
-    Note.find()
-    .then(notes => {
+    getNotes(req.params.userId).then(notes => {
         res.send(notes);
     }).catch(err => {
+        logger.error("error 500 while retrieving data")
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving notes."
         });
-    });
+    })
 };
-// Find a single note with a noteId
+exports.saveUser = (req, res) => {
+}
+/**
+ * @description find note by Id
+ * @param {object} req 
+ * @param {object} res 
+ */
 exports.findOne = (req, res) => {
-    Note.findById(req.params.noteId)
-    .then(note => {
-        if(!note) {
-            return res.status(404).send({
-                message: "Note not found with id " + req.params.noteId
-            });            
+    getNote(req.params.userId,req.params.noteId, (error, resultData) => {
+        logger.error("Error retrieving note with id " + req.params.noteId)
+        if (error) {
+            return res.status(500).send({
+                message: "Error retrieving note with id " + req.params.noteId
+            })
         }
-        res.send(note);
-    }).catch(err => {
-        if(err.kind === 'ObjectId') {
-            return res.status(404).send({
-                message: "Note not found with id " + req.params.noteId
-            });                
-        }
-        return res.status(500).send({
-            message: "Error retrieving note with id " + req.params.noteId
-        });
-    });
-};
 
-// Update a note identified by the noteId in the request
-exports.update = (req, res) => {
-    // Validate Request
-    if(!req.body.content) {
-        return res.status(400).send({
-            message: "Note content can not be empty"
-        });
-    }
-
-    // Find note and update it with the request body
-    Note.findByIdAndUpdate(req.params.noteId, {
-        title: req.body.title || "Untitled Note",
-        content: req.body.content
-    }, {new: true})
-    .then(note => {
-        if(!note) {
+        if (err.kind === 'ObjectId') {
+            logger.error("note not found with id")
             return res.status(404).send({
                 message: "Note not found with id " + req.params.noteId
             });
         }
+        res.send(resultData);
+    })
+
+};
+/**
+ * @description update notes
+ * @param {object} req 
+ * @param {object} res 
+ */
+exports.update = (req, res) => { // Find note and update it with the request body
+    let id = req.params.noteId
+    let userid=req.params.userId
+    let title = req.body.title
+    let content = req.body.content
+    updateNoteId(userid,id, title, content).then(note => {
+        console.log("this")
         res.send(note);
     }).catch(err => {
-        if(err.kind === 'ObjectId') {
+        console.log("catch" + err)
+        if (err.kind === 'ObjectId') {
+            logger.error("note not found with id")
             return res.status(404).send({
                 message: "Note not found with id " + req.params.noteId
-            });                
+            });
         }
+        logger.error("Error updating note with id " + req.params.noteId)
         return res.status(500).send({
             message: "Error updating note with id " + req.params.noteId
         });
     });
 };
-
-// Delete a note with the specified noteId in the request
+/**
+ * @description delete notes
+ * @param {object} req 
+ * @param {object} res 
+ */
 exports.delete = (req, res) => {
-    Note.findByIdAndRemove(req.params.noteId)
-    .then(note => {
-        if(!note) {
+    deleteNote(req.params.noteId).then(note => {
+        res.send({ message: "Note deleted successfully!" });
+    }).catch(err => {
+        if (err.kind === 'ObjectId' || err.name === 'NotFound') {
+            logger.error("Note not found with id " + req.params.noteId)
             return res.status(404).send({
                 message: "Note not found with id " + req.params.noteId
             });
         }
-        res.send({message: "Note deleted successfully!"});
-    }).catch(err => {
-        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).send({
-                message: "Note not found with id " + req.params.noteId
-            });                
-        }
+        logger.error("Could not delete note with id " + req.params.noteId)
         return res.status(500).send({
             message: "Could not delete note with id " + req.params.noteId
+
         });
     });
 };

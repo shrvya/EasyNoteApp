@@ -1,0 +1,20 @@
+Label🏷️ : Oct-21-2021 12:31:20: 	User validation failed: firstname: Cast to string failed for value "{
+  firstname: 'Iron',
+  lastname: 'Stark',
+  age: 78,
+  email: 'pepperpots@gmail.com',
+  password: 'natasha'
+}" (type Object) at path "firstname", email: Path `email` is required.
+Label🏷️ : Oct-21-2021 12:32:23: 	User validation failed: firstname: Cast to string failed for value "{
+  firstname: 'Irontony',
+  lastname: 'Stark',
+  age: 78,
+  email: 'pepperpots@gmail.com',
+  password: 'natasha'
+}" (type Object) at path "firstname", email: Path `email` is required.
+Label🏷️ : Oct-21-2021 12:59:38: 	Error retrieving note with id 617113eec817a0b426935283
+Label🏷️ : Oct-21-2021 13:00:41: 	Error retrieving note with id 617113eec817a0b426935283
+Label🏷️ : Oct-21-2021 13:05:07: 	Error retrieving user with id 617113eec817a0b426935283
+Label🏷️ : Oct-21-2021 15:00:45: 	Error retrieving user with id 617113eec817a0b426935283
+Label🏷️ : Oct-21-2021 15:06:57: 	Error retrieving user with id 617113eec817a0b426935283
+Label🏷️ : Oct-21-2021 15:07:26: 	Error retrieving user with id 617113eec817a0b426935283
