@@ -1,6 +1,6 @@
 const jwtHelper = require("../utility/auth");
-class noteValidation {
-  validate = (req, res, next) => {
+
+  const validate = (req, res, next) => {
     //check if content is present
     if (!req.body.content) {
       return res.status(400).send({
@@ -19,21 +19,28 @@ class noteValidation {
     }
   };
 
-  ensureToken = (req, res, next) => {
-    const bearerHeader = req.headers["authorization"];
-    if (!bearerHeader) {
-      res.send("Token is empty");
-    }
-    const bearer = bearerHeader.split(" ");
-    const token = bearer[1];
-    jwtHelper.verifyToken(token, (err, data) => {
-      if (err) {
-        res.send(err);
-      }
-      req.body.userId=data._id;
-      next();
-    });
-  };
-}
+ const ensureToken = (req, res, next) => {
+  
+  const authHeader = req.headers.authorization;
 
-module.exports = new noteValidation();
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
+
+        jwtHelper.verifyToken(token, (err, user) => {
+            if (err) {
+                return res.send(err);
+            }
+            req.body.userId = user._id;
+            console.log(user._id);
+            next();
+        });
+    } else {
+        res.sendStatus(401);
+    }
+  
+};
+
+module.exports = {
+  validate,
+  ensureToken
+}

@@ -8,22 +8,30 @@ require('dotenv').config();
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+const cors = require('cors');
+const corsOptions ={
+    origin:'http://localhost:3000',
+    credentials:true,            //access-control-allow-credentials:true
+    optionSuccessStatus:200
+}
+
 
 // create express app
 const app = express();
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // middleware
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
-app.use('/notes', route)
-app.use('/users', routeUser)
+app.use('/notes',cors(corsOptions), route)
+app.use('/users',cors(corsOptions), routeUser)
 
 // define a simple route
 app.get('/', (req, res) => {
     res.json({"message": "Welcome to EasyNotes application. Take notes quickly. Organize and keep track of all your notes."});
 });
 // listen for requests
-app.listen(3000, () => {
-    console.log("Server is listening on port 3000");
+app.listen(4000, () => {
+    console.log("Server is listening on port 4000");
     dbConnect();
 });

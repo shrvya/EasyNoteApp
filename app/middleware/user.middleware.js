@@ -7,7 +7,7 @@ const userValidationRules = () => {
             .withMessage("Please enter valid lasttname"),
         check('age').isNumeric().withMessage("enter valid age"),
         check('email').exists().isEmail().withMessage("enter valid Email"),
-        check('password').isLength({ min: 5 })
+        check('password').matches("^[a-zA-Z0-9@#$%^&*()!~]{8,}$").withMessage("enter valid passswordd")
     ]
 }
 

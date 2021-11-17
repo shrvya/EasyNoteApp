@@ -3,7 +3,7 @@
 const { isEmpty } = require('class-validator');
 const logger = require('../../utils/logger.js');
 const {
-    createNewUser, getUsers, getUser, updateUserId, deleteUser, loginNewUser, registerNewUser, forgotPassword, resetPass
+    createNewUser, getUsers, getUser, updateUserId, deleteUser, loginNewUser, registerNewUser, forgot, resetPass
 } = require('../service/user.service');
 const dto = require("./user.response");
 
@@ -20,66 +20,80 @@ exports.loginUser = (req, res) => {
             logger.error(err);
             responseObject = dto.userApiFailure;
             responseObject.message = err;
+          
             return res.send(responseObject);
+           
 
         }
         logger.info("login Successful");
         responseObject = dto.userApiSuccess;
         responseObject.message = data;
+        console.log("login"+responseObject);
         res.send(responseObject);
     });
 };
+
 /**
  * @description handles response when user forgets password
  * @param {object} req 
  * @param {object} res 
  */
-exports.forgotPass = (req, res) => {
-    let mail = req.body.email;
-    forgotPassword(mail)
-        .then((data) => {
-            logger.info("forgot password sucessful");
-            responseObject = dto.userApiSuccess;
-            responseObject.message = "mail sent";
-            console.log(data);
-            res.send(responseObject);
-            {
-                log(mail);
-                createEmail({ email: mail });
-            }
-        })
-        .catch(
-            (err) => {
-                logger.error(err);
-                responseObject = dto.userApiFailure;
-                responseObject.message = err;
-                return res.send(responseObject);
-            }
-        )
-
-
-}
+exports.forgotPassword = (req, res) => {
+    let email = req.body.email;
+    forgot(email)
+      .then((data) => {
+        logger.info("forgot password sucessful");
+        responseObject = dto.userApiSuccess;
+        responseObject.message = "mail sent";
+        console.log(data);
+        res.send("Result:" + data);
+      })
+      .catch((err) => {
+        console.log("error:" + err);
+        logger.error(err);
+        responseObject = dto.userApiFailure;
+        responseObject.message = err;
+      res.send(responseObject);
+        
+      });
+  };
 /**
  * @description handles reset password request
  * @param {object} req 
  * @param {object} res 
  */
+// exports.resetPassword = (req, res) => {
+//     let token = req.params.token;
+//     let password = req.body.password;
+//     resetPass(token, password).then((data) => {
+//         logger.info("reset password sucessful");
+//         responseObject = dto.userApiSuccess;
+//         responseObject.message = "Password sucessfully set" + data;
+//         res.send(responseObject);
+//     }).catch((err) => {
+//         logger.error(err);
+//         responseObject = dto.userApiFailure;
+//         responseObject.message = err;
+//         console.log(err);
+//         return res.send(responseObject);
+//     })
+// };
+
 exports.resetPassword = (req, res) => {
     let token = req.params.token;
-    let password = req.body.password;
-    resetPass(token, password).then((data) => {
-        logger.info("forgot password sucessful");
-        responseObject = dto.userApiSuccess;
-        responseObject.message = "Password sucessfully set" + data;
-        res.send(responseObject);
-    }).catch((err) => {
-        logger.error(err);
-        responseObject = dto.userApiFailure;
-        responseObject.message = err;
-        return res.send(responseObject);
-    })
+    let password = req.body.password
+    resetPass(token,password)
+      .then((data) => {
+          console.log(data);
+        res.json({message:"Password updated successfully","Result:" :data});
+      })
+      .catch((err) => {
+        console.log("error:" + err);
+        res.send(err);
+      });
+  };
+  
 
-};
 /**
  * @description registers users 
  * @param  req 
@@ -137,26 +151,7 @@ exports.findAll = (req, res) => {
         });
     })
 };
-// // Find a single note with a noteId
-// exports.findOne = (req, res) => {
-//     getUser(req.params.userId, (error, resultData) => {
-//         logger.error("Error retrieving user with id " + req.params.userId)
-//         if (error) {
-//             return res.status(500).send({
-//                 message: "Error retrieving user with id " + req.params.userId
-//             })
-//         }
 
-//         // if (err.kind === 'ObjectId') {
-//         //     logger.error("note not found with id")
-//         //     return res.status(404).send({
-//         //         message: "Note not found with id " + req.params.userId
-//         //     });
-//         // }
-//         res.send(resultData);
-//     })
-
-// };
 /**
  * @description retrive information of single user
  * @param {object} req 

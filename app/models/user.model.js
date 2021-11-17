@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwtHelper = require("../utility/auth");
 const UserSchema = mongoose.Schema({
   firstname: String,
   lastname: String,
   age: Number,
   email: {
     type: String,
-    required: true,
-    unique: [true, "already exists"],
+    
+    unique: true,
   },
   password: {
     type: String,
@@ -30,24 +31,22 @@ const createUser = (userdetails) => {
   return user.save()
 };
 
-const forgotUser = (mail) => {
-  return User.findOne({ email: mail });
 
-}
-
-const reset = (token, Password) => {
+forgotPassword = (email) => {
   return User
-    .findOne({ resetPasswordToken: token })
+    .findOne({ email: email })
     .then((data) => {
       if (!data) {
-        throw "token not found";
+        throw "Email not found";
       } else {
-        encryptPassword = bcrypt.hashSync(Password, 10);
-        (data.password = encryptPassword),
-          (data.resetPasswordToken = undefined);
-        return data.save()
-          .then((data) => {
-            return data;
+        let randomToken = jwtHelper.generateRandomCode();
+        data.resetPasswordToken = randomToken;
+        data.resetPasswordExpires = Date.now() + 3600000;
+        return data
+          .save()
+          .then((res) => {
+            console.log(res);
+            return res;
           })
           .catch((err) => {
             throw err;
@@ -58,6 +57,128 @@ const reset = (token, Password) => {
       throw err;
     });
 };
+
+// const reset = (token, Password) => {
+//   return User
+//     .findOne({ resetPasswordToken: token })
+//     .then((data) => {
+//       if (!data) {
+//         throw "token not found";
+//       } else {
+//         encryptPassword = bcrypt.hashSync(Password, 10);
+//         (data.password = encryptPassword),
+//           (data.resetPasswordToken = undefined);
+//         return data.save()
+//           .then((data) => {
+//             return data;
+//           })
+//           .catch((err) => {
+//             throw err;
+//           });
+//       }
+//     })
+//     .catch((err) => {
+//       throw err;
+//     });
+// };
+// const reset= (token, password) => {
+//   return User
+//     .findOne({ resetPasswordToken: token })
+//     .then((data) => {
+//       if (!data) {
+//         throw "token not found";
+//       } else {
+//         encryptedPassword = bcrypt.hashSync(password, 10);
+//         (data.password = encryptedPassword),
+//           (data.resetPasswordToken = undefined);
+//         return data
+//           .save()
+//           .then((data) => {
+//             return data;
+//           })
+//           .catch((err) => {
+//             throw err;
+//           });
+//       }
+//     })
+//     .catch((err) => {
+//       throw err;
+//     });
+// };
+// const reset = (token, newPassword) => {
+//   return User
+//     .findOne({ resetPasswordToken: token })
+//     .then((data) => {
+//       if (!data) {
+//         throw "token not found";
+//       } else {
+//         encryptedPassword = bcrypt.hashSync(newPassword, 10);
+//         (data.password = encryptedPassword),
+//           (data.resetPasswordToken = undefined);
+//         return data
+//           .save()
+//           .then((data) => {
+//             return data;
+//           })
+//           .catch((err) => {
+//             console.log("errrrrrr");
+//             throw err;
+//           });
+//       }
+//     })
+//     .catch((err) => {
+//       throw err;
+//     });
+// };
+reset = (token, newPassword) => {
+  return User.findOne({resetPasswordToken: token}).then((data) => {
+      if (!data) {
+          throw "token not found";
+      } else {
+          encryptedPassword = bcrypt.hashSync(newPassword, 10);
+          (data.password = encryptedPassword),
+          (data.resetPasswordToken = undefined);
+          return data.save().then((data) => {
+          
+              return data;
+          }).catch((err) => {
+            console.log("err");
+              throw err;
+          });
+      }
+  }).catch((err) => {
+      throw err;
+  });
+};
+// reset = (token, newPassword) => {
+//   return User
+//     .findOne({
+//       resetPasswordToken: token,
+//       resetPasswordExpires: { $gt: Date.now() },
+//     })
+//     .then((data) => {
+//       if (!data) {
+//         throw "token not found";
+//       } else {
+//         encryptedPassword = bcrypt.hashSync(newPassword, 10);
+//         (data.password = encryptedPassword),
+//           (data.resetPasswordToken = undefined),
+//           (data.resetPasswordExpires = undefined);
+//         return data
+//           .save()
+//           .then((data) => {
+//             return data;
+//           })
+//           .catch((err) => {
+//             throw err;
+//           });
+//       }
+//     })
+//     .catch((err) => {
+//       throw err;
+//     });
+// };
+
 const loginUser = (body, callback) => {
   return User.findOne({ email: body.email }, (err, data) => {
     return err ? callback(err, null) : callback(null, data);
@@ -109,5 +230,5 @@ module.exports = {
   updateUser,
   deleteById,
   loginUser,
-  registerUser, User, forgotUser, reset
+  registerUser, forgotPassword, reset
 }

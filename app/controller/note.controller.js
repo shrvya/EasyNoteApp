@@ -1,3 +1,4 @@
+
 const logger = require('../../utils/logger.js');
 const {
     createNewNote,
@@ -13,8 +14,8 @@ const {
  * creates a user from data given
  */
 exports.create = (req, res) => {
-
-    createNewNote(req.body.title, req.body.content).then(data => {
+console.log(req.params.userId);
+    createNewNote(req.body.title, req.body.content,req.body.userId).then(data => {
         res.send(data);
     }).catch(err => {
         logger.error(err.message || "Some error occurred while creating the Note.")
@@ -30,7 +31,7 @@ exports.create = (req, res) => {
  * @param {object} res 
  */
 exports.findAll = (req, res) => {
-    getNotes(req.params.userId).then(notes => {
+    getNotes(req.body.userId).then(notes => {
         res.send(notes);
     }).catch(err => {
         logger.error("error 500 while retrieving data")
@@ -47,7 +48,7 @@ exports.saveUser = (req, res) => {
  * @param {object} res 
  */
 exports.findOne = (req, res) => {
-    getNote(req.params.userId,req.params.noteId, (error, resultData) => {
+    getNote(req.body.userId,req.params.noteId, (error, resultData) => {
         logger.error("Error retrieving note with id " + req.params.noteId)
         if (error) {
             return res.status(500).send({
@@ -72,10 +73,10 @@ exports.findOne = (req, res) => {
  */
 exports.update = (req, res) => { // Find note and update it with the request body
     let id = req.params.noteId
-    let userid=req.params.userId
+    
     let title = req.body.title
     let content = req.body.content
-    updateNoteId(userid,id, title, content).then(note => {
+    updateNoteId(req.body.userId,id, title, content).then(note => {
         console.log("this")
         res.send(note);
     }).catch(err => {
@@ -98,7 +99,7 @@ exports.update = (req, res) => { // Find note and update it with the request bod
  * @param {object} res 
  */
 exports.delete = (req, res) => {
-    deleteNote(req.params.noteId).then(note => {
+    deleteNote(req.body.userId,req.params.noteId).then(note => {
         res.send({ message: "Note deleted successfully!" });
     }).catch(err => {
         if (err.kind === 'ObjectId' || err.name === 'NotFound') {
