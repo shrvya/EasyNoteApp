@@ -1,22 +1,29 @@
 
-const logger = require('../../utils/logger.js');
+/**
+ * @description:get the request, response object from note routes
+ * @file:note.controller.js
+ * @author:Shrivya Shetty
+ * @since:01-12-2021
+ */
+const logger = require('../../../utils/logger');
 const {
     createNewNote,
     getNotes,
     getNote,
     updateNoteId,
     deleteNote
-} = require('../service/note.service.js')
+} = require('../../service/note.service')
 /**
- * 
+ * @description handles request response for creating a Note and saves it
  * @param {object} req 
  * @param {object} res 
- * creates a user from data given
- */
+  */
 exports.create = (req, res) => {
+    let filename= (req.file===undefined)?(undefined):(req.file.filename)
 console.log(req.params.userId);
-    createNewNote(req.body.title, req.body.content,req.body.userId).then(data => {
+    createNewNote(req.body.title, req.body.content,req.body.userId,filename).then(data => {
         res.send(data);
+        logger.info("User created  Successful");
     }).catch(err => {
         logger.error(err.message || "Some error occurred while creating the Note.")
         res.status(500).send({
@@ -26,13 +33,14 @@ console.log(req.params.userId);
     });
 };
 /**
- * @description retrieve data from database
+ * @description handle request to retrieve data from database
  * @param {object} req 
  * @param {object} res 
  */
 exports.findAll = (req, res) => {
     getNotes(req.body.userId).then(notes => {
         res.send(notes);
+        logger.info("findall notes Successful");
     }).catch(err => {
         logger.error("error 500 while retrieving data")
         res.status(500).send({
@@ -43,7 +51,7 @@ exports.findAll = (req, res) => {
 exports.saveUser = (req, res) => {
 }
 /**
- * @description find note by Id
+ * @description handles request to find note by Id
  * @param {object} req 
  * @param {object} res 
  */
@@ -63,21 +71,25 @@ exports.findOne = (req, res) => {
             });
         }
         res.send(resultData);
+        logger.info("find one note Successful");
     })
 
 };
 /**
- * @description update notes
+ * @description handles request to update notes
  * @param {object} req 
  * @param {object} res 
  */
-exports.update = (req, res) => { // Find note and update it with the request body
+exports.update = (req, res) => { 
     let id = req.params.noteId
     
     let title = req.body.title
     let content = req.body.content
-    updateNoteId(req.body.userId,id, title, content).then(note => {
-        console.log("this")
+    let isTrash=req.body.isTrash
+    let color=req.body.color
+    let filename= (req.file===undefined)?(undefined):(req.file.filename)
+    updateNoteId(req.body.userId,id, title, content,isTrash,color,filename).then(note => {
+        logger.info("Note update Successful");
         res.send(note);
     }).catch(err => {
         console.log("catch" + err)
@@ -94,13 +106,14 @@ exports.update = (req, res) => { // Find note and update it with the request bod
     });
 };
 /**
- * @description delete notes
+ * @description handles request delete notes
  * @param {object} req 
  * @param {object} res 
  */
 exports.delete = (req, res) => {
     deleteNote(req.body.userId,req.params.noteId).then(note => {
         res.send({ message: "Note deleted successfully!" });
+        logger.info("delete user Successful");
     }).catch(err => {
         if (err.kind === 'ObjectId' || err.name === 'NotFound') {
             logger.error("Note not found with id " + req.params.noteId)

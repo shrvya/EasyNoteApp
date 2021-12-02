@@ -1,3 +1,9 @@
+/**
+ * @description:to get the data from the service and processes it
+ * @file:user.model.js
+ * @author:Shrivya Shetty
+ * @since:01-12-2021
+ */
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwtHelper = require("../utility/auth");
@@ -7,17 +13,20 @@ const UserSchema = mongoose.Schema({
   age: Number,
   email: {
     type: String,
-    
+
     unique: true,
   },
   password: {
     type: String,
-    //minlength:5
-    //required=true,
+
   }
 }, { timestamps: true });
 const User = mongoose.model('User', UserSchema);
-// Create a user 1st method
+/**
+ * @description querry to create user
+ * @param {*} userdetails 
+ * @returns 
+ */
 
 const createUser = (userdetails) => {
   passwordhash = bcrypt.hashSync(userdetails.password, 10);
@@ -31,7 +40,9 @@ const createUser = (userdetails) => {
   return user.save()
 };
 
-
+/**
+ * @description querry to forgot password
+ */
 forgotPassword = (email) => {
   return User
     .findOne({ email: email })
@@ -58,134 +69,48 @@ forgotPassword = (email) => {
     });
 };
 
-// const reset = (token, Password) => {
-//   return User
-//     .findOne({ resetPasswordToken: token })
-//     .then((data) => {
-//       if (!data) {
-//         throw "token not found";
-//       } else {
-//         encryptPassword = bcrypt.hashSync(Password, 10);
-//         (data.password = encryptPassword),
-//           (data.resetPasswordToken = undefined);
-//         return data.save()
-//           .then((data) => {
-//             return data;
-//           })
-//           .catch((err) => {
-//             throw err;
-//           });
-//       }
-//     })
-//     .catch((err) => {
-//       throw err;
-//     });
-// };
-// const reset= (token, password) => {
-//   return User
-//     .findOne({ resetPasswordToken: token })
-//     .then((data) => {
-//       if (!data) {
-//         throw "token not found";
-//       } else {
-//         encryptedPassword = bcrypt.hashSync(password, 10);
-//         (data.password = encryptedPassword),
-//           (data.resetPasswordToken = undefined);
-//         return data
-//           .save()
-//           .then((data) => {
-//             return data;
-//           })
-//           .catch((err) => {
-//             throw err;
-//           });
-//       }
-//     })
-//     .catch((err) => {
-//       throw err;
-//     });
-// };
-// const reset = (token, newPassword) => {
-//   return User
-//     .findOne({ resetPasswordToken: token })
-//     .then((data) => {
-//       if (!data) {
-//         throw "token not found";
-//       } else {
-//         encryptedPassword = bcrypt.hashSync(newPassword, 10);
-//         (data.password = encryptedPassword),
-//           (data.resetPasswordToken = undefined);
-//         return data
-//           .save()
-//           .then((data) => {
-//             return data;
-//           })
-//           .catch((err) => {
-//             console.log("errrrrrr");
-//             throw err;
-//           });
-//       }
-//     })
-//     .catch((err) => {
-//       throw err;
-//     });
-// };
+/**
+ * @description querry to reset user password
+ */
 reset = (token, newPassword) => {
-  return User.findOne({resetPasswordToken: token}).then((data) => {
-      if (!data) {
-          throw "token not found";
-      } else {
-          encryptedPassword = bcrypt.hashSync(newPassword, 10);
-          (data.password = encryptedPassword),
-          (data.resetPasswordToken = undefined);
-          return data.save().then((data) => {
-          
-              return data;
-          }).catch((err) => {
-            console.log("err");
-              throw err;
-          });
-      }
+  return User.findOne({ resetPasswordToken: token }).then((data) => {
+    if (!data) {
+      throw "token not found";
+    } else {
+      encryptedPassword = bcrypt.hashSync(newPassword, 10);
+      (data.password = encryptedPassword),
+        (data.resetPasswordToken = undefined);
+      return data.save().then((data) => {
+
+        return data;
+      }).catch((err) => {
+        console.log("err");
+        throw err;
+      });
+    }
   }).catch((err) => {
-      throw err;
+    throw err;
   });
 };
-// reset = (token, newPassword) => {
-//   return User
-//     .findOne({
-//       resetPasswordToken: token,
-//       resetPasswordExpires: { $gt: Date.now() },
-//     })
-//     .then((data) => {
-//       if (!data) {
-//         throw "token not found";
-//       } else {
-//         encryptedPassword = bcrypt.hashSync(newPassword, 10);
-//         (data.password = encryptedPassword),
-//           (data.resetPasswordToken = undefined),
-//           (data.resetPasswordExpires = undefined);
-//         return data
-//           .save()
-//           .then((data) => {
-//             return data;
-//           })
-//           .catch((err) => {
-//             throw err;
-//           });
-//       }
-//     })
-//     .catch((err) => {
-//       throw err;
-//     });
-// };
 
+/**
+ * @description querry to login user
+ * @param {*} body 
+ * @param {*} callback 
+ * @returns 
+ */
 const loginUser = (body, callback) => {
   return User.findOne({ email: body.email }, (err, data) => {
     return err ? callback(err, null) : callback(null, data);
   });
 };
 
-//creates a user and saves it in database
+/**
+ * @description querry to register a new user
+ * @param {*} body 
+ * @param {*} callback 
+ * @returns 
+ */
 const registerUser = (body, callback) => {
 
   const user = new User({
@@ -200,14 +125,30 @@ const registerUser = (body, callback) => {
     return err ? callback(err, null) : callback(null, data);
   });
 };
+/**
+ * @description querry to find users
+ * @returns 
+ */
 const findAllUsers = () => {
   return User.find()
 }
-
+/**
+ * @description querry to find user
+ * @param {*} findId 
+ * @returns 
+ */
 const findUser = (findId) => {
   return User.findById(findId)
 }
-// Find  and update user
+/**
+ * @description querry to find and update a user
+ * @param {*} firstname 
+ * @param {*} lastname 
+ * @param {*} age 
+ * @param {*} email 
+ * @param {*} password 
+ * @returns 
+ */
 const updateUser = (firstname, lastname, age, email, password) => {
   return User.findByIdAndUpdate(findId, {
     firstname: firstname, lastname: lastname, age: age, email: email, password: password
@@ -219,7 +160,11 @@ const updateUser = (firstname, lastname, age, email, password) => {
     return err
   })
 }
-// query to delete a note
+/**
+ * @description querry to delete a  user using id
+ * @param {*} findId 
+ * @returns 
+ */
 const deleteById = (findId) => {
   return User.findByIdAndRemove(findId)
 }

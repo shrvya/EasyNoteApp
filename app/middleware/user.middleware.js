@@ -1,4 +1,15 @@
+/**
+ * @description:validates credentials of user
+ * @file:user.middleware.js
+ * @author:Shrivya Shetty
+ * @since:01-12-2021
+ */
+
 const { check, validationResult } = require('express-validator');
+/**
+ * @description validates credentials of user
+ * @returns 
+ */
 const userValidationRules = () => {
     return [
         check('firstname').exists().matches("^[A-Z][a-zA-Z]{2,}").isLength({ min: 3 })

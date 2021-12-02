@@ -1,15 +1,21 @@
-// controller.js
 
+
+/**
+ * @description:get the request, response object from user routes
+ * @file:user.controller.js
+ * @author:Shrivya Shetty
+ * @since:01-12-2021
+ */
 const { isEmpty } = require('class-validator');
-const logger = require('../../utils/logger.js');
+const logger = require('../../../utils/logger');
 const {
     createNewUser, getUsers, getUser, updateUserId, deleteUser, loginNewUser, registerNewUser, forgot, resetPass
-} = require('../service/user.service');
+} = require('../../service/user.service');
 const dto = require("./user.response");
 
 let responseobj;
 /**
- * @description user login
+ * @description  handles request response user login
  * @param {object} req 
  * @param {object} res 
  */
@@ -62,22 +68,6 @@ exports.forgotPassword = (req, res) => {
  * @param {object} req 
  * @param {object} res 
  */
-// exports.resetPassword = (req, res) => {
-//     let token = req.params.token;
-//     let password = req.body.password;
-//     resetPass(token, password).then((data) => {
-//         logger.info("reset password sucessful");
-//         responseObject = dto.userApiSuccess;
-//         responseObject.message = "Password sucessfully set" + data;
-//         res.send(responseObject);
-//     }).catch((err) => {
-//         logger.error(err);
-//         responseObject = dto.userApiFailure;
-//         responseObject.message = err;
-//         console.log(err);
-//         return res.send(responseObject);
-//     })
-// };
 
 exports.resetPassword = (req, res) => {
     let token = req.params.token;
@@ -116,11 +106,10 @@ exports.registerUser = (req, res) => {
 
 }
 /**
- * @description create new users 
+ * @description  handles request response to create new users 
  * @param {object} req 
  * @param {object} res 
- * creates user
- */
+  */
 exports.create = (req, res) => {
     createNewUser(req.body).then(data => {
         console.log(data);
@@ -135,7 +124,7 @@ exports.create = (req, res) => {
 
 
 /**
- * @description retrieve all users
+ * @description  handles request response to retrieve all users
  * @param {*} req 
  * @param {*} res 
  * Retrieve and return all notes from the database.
@@ -153,7 +142,7 @@ exports.findAll = (req, res) => {
 };
 
 /**
- * @description retrive information of single user
+ * @description  handles request response to retrive information of single user
  * @param {object} req 
  * @param {object} res 
  */
@@ -197,7 +186,7 @@ exports.update = (req, res) => {
     });
 };
 /**
- * @description delete single user 
+ * @description  handles request response to delete single user 
  * @param {object} req 
  * @param {object} res 
  */

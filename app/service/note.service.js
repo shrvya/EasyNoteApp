@@ -1,35 +1,59 @@
-//note.service.js
+/**
+ * @description:handles request and response for notes
+ * @file:note.service.js
+ * @author:Shrivya Shetty
+ * @since:01-12-2021
+ */
 const { createNote, findAllNotes, findNote, updateNote, deleteById } = require('../models/note.model.js');
 
-const createNewNote = (title, content,userId) => {
-    //function call to create a new note with the given title and content
-    let note = createNote(title, content,userId)
+/**
+   * @description Handles the request and response for creating a note
+   * @param {Object} req
+   * @param {Object} res
+   */
+const createNewNote = (title, content, userId, filename) => {
+
+    let note = createNote(title, content, userId, filename)
     return note
 }
 
-//query to find all notes
+/**
+   * @description Handles the request and response for retrieveing  all note
+   * @param {Object} req
+   * @param {Object} res
+   */
 const getNotes = (userId) => {
     return findAllNotes(userId)
 }
 
-//query to find a single note
-const getNote = (userId,findId, callback) => {
-    findNote(userId,findId, (error, data) => {
+/**
+   * @description Handles the request and response for retrieving a note
+   * @param {Object} req
+   * @param {Object} res
+   */
+const getNote = (userId, findId, callback) => {
+    findNote(userId, findId, (error, data) => {
         return (error) ? callback(error) : callback(data);
     })
 }
 
-// Find note and update it with the request body
-const updateNoteId = (userId,findId, title, content) => {
+/**
+   * @description Handles the request and response for updating a note
+   * @param {Object} req
+   * @param {Object} res
+   */
+const updateNoteId = (userId, findId, title, content, isTrash, color, filename) => {
 
-    return updateNote(userId,findId, { title: title, content: content }, { new: true })
-        .then((result) => { console.log(result); return result; })
-        .catch((err) => { console.log("catch model"); return err })
+    return updateNote(userId, findId, title, content, isTrash, color, filename)
 }
 
-//query to delete a note
-const deleteNote = (userId,findId) => {
-    return deleteById(userId,findId)
+/**
+   * @description Handles the request and response for deleting a note
+   * @param {Object} req
+   * @param {Object} res
+   */
+const deleteNote = (userId, findId) => {
+    return deleteById(userId, findId)
 }
 
 module.exports = { createNewNote, getNotes, getNote, updateNoteId, deleteNote }
