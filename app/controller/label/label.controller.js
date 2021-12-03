@@ -4,7 +4,7 @@
  * @author:Shrivya Shetty
  * @since:01-12-2021
  */
-const { log } = require('../../../utils/logger.js');
+
 const logger = require('../../../utils/logger.js');
 const {
     createNewLabel,
