@@ -2,5 +2,5 @@ node_modules/
 logs/
 extra.json
 package-lock.json
-package.json
+
 .env

@@ -140,6 +140,20 @@ exports.findAll = (req, res) => {
         });
     })
 };
+exports.findAll = async(req, res) => {
+    try {
+      let data = await  getUsers()
+      responseobj = dto.userApiSuccess;
+      responseobj.message = data;
+      logger.info("Retrieval successfull");
+      return res.send(responseobj);
+    } catch (error) {
+      logger.error(error);
+      responseobj = dto.userApiFailure;
+      responseobj.message = err.message;
+      return res.send(responseobj);
+    }
+  };
 
 /**
  * @description  handles request response to retrive information of single user

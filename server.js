@@ -39,3 +39,4 @@ app.listen(4000, () => {
     dbConnect();
     
 });
+module.exports = app;

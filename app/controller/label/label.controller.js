@@ -1,7 +1,9 @@
 /**
+ *  Execution  : 1. default node  cmd> nodemon server.js
  * @description:handles request and response for labels
  * @file:label.controller.js
  * @author:Shrivya Shetty
+ * @version:1.0
  * @since:01-12-2021
  */
 
@@ -22,10 +24,13 @@ const {
 exports.create = async (req, res) => {
     try {
         const data = await createNewLabel(req.body.labelname);
-        return res.send(data)
+        
+        return res.status(200).send(data)
+
     } catch (err) {
         logger.error(err)
-        return res.send(err)
+      
+        return res.status(500).send(err)
     }
 }
 /**

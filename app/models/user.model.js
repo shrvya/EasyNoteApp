@@ -129,9 +129,17 @@ const registerUser = (body, callback) => {
  * @description querry to find users
  * @returns 
  */
-const findAllUsers = () => {
-  return User.find()
-}
+// const findAllUsers = () => {
+//   return User.find()
+// }
+const findAllUsers = async () => {
+  try {
+    let data = await User.find();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
 /**
  * @description querry to find user
  * @param {*} findId 

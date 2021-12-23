@@ -18,6 +18,7 @@ const {
 const mailHelper = require("../utility/nodemailer");
 const bcrypt = require('bcrypt');
 const jwtHelper = require("../utility/auth");
+const redis = require("../utility/redis/cache")
 const { createEmail } = require("../utility/nodemailer");
 /**
  * @description handles request and response for creating user
@@ -115,9 +116,22 @@ const createNewUser = (userdetails) => {
  * @returns detais from database
  */
 
-const getUsers = () => {
-  return findAllUsers()
-}
+// const getUsers = () => {
+//   return findAllUsers()
+// }
+const getUsers = async () => {
+  try {
+    let data = await redis.getUser("user")
+    if(data === null){
+      data = await findAllUsers();
+      await redis.setUser("user",JSON.stringify(data))
+    }
+    await redis.closeConnection();
+    return JSON.parse(data);
+  } catch (error) {
+    throw error;
+  }
+};
 /**
  * @description fetches information about a user
  * @param {*} findId 
