@@ -1,3 +1,4 @@
+require('dotenv').config();
 module.exports = {
-    url: 'mongodb+srv://Shrivya123:Shrivya123@cluster0.pqayi.mongodb.net/Fundoapp?retryWrites=true&w=majority'
+    url: process.env.MONGO_URL
 }
