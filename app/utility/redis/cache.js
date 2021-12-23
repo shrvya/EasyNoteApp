@@ -5,7 +5,7 @@ class RedisHelper {
   constructor() {
     client = redis.createClient();
   }
-
+  
   getUser = async (key) => {
     try {
       await client.connect();

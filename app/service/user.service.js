@@ -28,6 +28,8 @@ const { createEmail } = require("../utility/nodemailer");
  */
 const loginNewUser = (body, callback) => {
   loginUser(body, (err, data) => {
+    console.log(body.password);
+    // console.log(data.password);
     if (err) {
       return callback(err, null);
     } else {
