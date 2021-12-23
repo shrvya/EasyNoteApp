@@ -150,7 +150,7 @@ exports.findAll = async(req, res) => {
     } catch (error) {
       logger.error(error);
       responseobj = dto.userApiFailure;
-      responseobj.message = err.message;
+      responseobj.message = error.message;
       return res.send(responseobj);
     }
   };
@@ -184,7 +184,7 @@ exports.update = (req, res) => {
     let age = req.body.age
     let email = req.body.email
     let password = req.body.password
-    updateUserId(id, firstname, lastname, age, email, passsword).then(data => {
+    updateUserId(id, firstname, lastname, age, email, password).then(data => {
         res.send(data);
     }).catch(err => {
         if (err.kind === 'ObjectId') {

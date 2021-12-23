@@ -14,7 +14,7 @@ const UserSchema = mongoose.Schema({
   email: {
     type: String,
 
-    unique: true,
+    // unique: true,
   },
   password: {
     type: String,
@@ -157,7 +157,7 @@ const findUser = (findId) => {
  * @param {*} password 
  * @returns 
  */
-const updateUser = (firstname, lastname, age, email, password) => {
+const updateUser = (findId,firstname, lastname, age, email, password) => {
   return User.findByIdAndUpdate(findId, {
     firstname: firstname, lastname: lastname, age: age, email: email, password: password
   }, { new: true }).then((result) => {
